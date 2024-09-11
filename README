@@ -1,0 +1,6 @@
+JSON
+====
+
+This is a small program to work with JSON-encoded data.  It is much
+simpler than programs like jq.  The file test.sh demonstrates how to
+use it.
