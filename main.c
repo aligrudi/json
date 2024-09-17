@@ -51,30 +51,46 @@ static int jprint(char *json, int nl)
 	return 0;
 }
 
-static int follow(char *json, char *chain[])
+static int ccut(char **src, char *dst)
 {
+	int sep = 0;
+	while (**src && **src != '.' && **src != ',')
+		*dst++ = *(*src)++;
+	*dst = '\0';
+	if (**src)
+		sep = *(*src)++;
+	return sep;
+}
+
+static int follow(char *json, char *spec)
+{
+	char cur[256];
 	char *new;
+	int sep;
 	json += json_ws(json);
-	if (chain[0] == NULL)
-		return jprint(json, chain != NULL);
-	if (chain[0][0] == '*' && chain[0][1] == '\0') {
+	if (!spec[0])
+		return jprint(json, 1);
+	sep = ccut(&spec, cur);
+	if (cur[0] == '*' && cur[1] == '\0') {
 		char **data;
 		if ((data = json_list(json)) != NULL) {
 			int j;
 			for (j = 0; data[j]; j++)
-				follow(data[j], chain + 1);
+				follow(data[j], spec);
 			free(data);
 			return 0;
 		}
 		write(1, "\n", 1);
 		return 1;
 	}
-	while (chain[0][0] == ':' && chain[1] != NULL)
-		jprint(json_dict_get(json, *chain++ + 1), 0);
-	if ((new = json_dict_get(json, chain[0])) != NULL)
-		return follow(new, chain + 1);
-	if ((new = json_list_get(json, atoi(chain[0]))) != NULL)
-		return follow(new, chain + 1);
+	if (sep == ',') {
+		jprint(json_dict_get(json, cur), 0);
+		return follow(json, spec);
+	}
+	if ((new = json_dict_get(json, cur)) != NULL)
+		return follow(new, spec);
+	if ((new = json_list_get(json, atoi(cur))) != NULL)
+		return follow(new, spec);
 	write(1, "\n", 1);
 	return 1;
 }
@@ -84,6 +100,7 @@ int main(int argc, char *argv[])
 	char *dat = readall(0);
 	if (dat == NULL)
 		return 1;
-	follow(dat, argv + 1);
+	follow(dat, argv[1]);
+	free(dat);
 	return 0;
 }

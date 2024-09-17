@@ -20,29 +20,29 @@ EOF
 # 3
 
 # printing fields of nested objects:
-./json parent size <test.txt
+./json parent.size <test.txt
 # 325M
 
 # printing multiple fields of an object (fields are tab-separated):
-./json :path count <test.txt
+./json path,count <test.txt
 # /home	3
 
 # printing nested entries and fields:
-./json data 0 <test.txt
+./json data.0 <test.txt
 # {"name": "user", "size": "2M", "children": 40}
 
 # list entries can be accessed by index:
-./json data 1 name <test.txt
+./json data.1.name <test.txt
 # john
 
 # printing all entries:
-./json data '*' name <test.txt
+./json 'data.*.name' <test.txt
 # user
 # john
 # test
 
 # printing multiple fields of all list entries:
-./json data '*' :size name <test.txt
+./json 'data.*.size,name' <test.txt
 # 2M	user
 # 8M	john
 # 1M	test
