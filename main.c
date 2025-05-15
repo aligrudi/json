@@ -68,7 +68,7 @@ static int follow(char *json, char *spec)
 	char *new;
 	int sep;
 	json += json_ws(json);
-	if (!spec[0])
+	if (!spec || !spec[0])
 		return jprint(json, 1);
 	sep = ccut(&spec, cur);
 	if (cur[0] == '*' && cur[1] == '\0') {
