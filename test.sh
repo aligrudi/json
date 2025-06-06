@@ -46,3 +46,13 @@ EOF
 # 2M	user
 # 8M	john
 # 1M	test
+
+# printing all object fields:
+./json 'parent.*' <test.txt
+# path
+# size
+
+# printing all object field values:
+./json 'parent.:' <test.txt
+# /
+# 325M

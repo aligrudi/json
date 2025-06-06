@@ -71,12 +71,28 @@ static int follow(char *json, char *spec)
 	if (!spec || !spec[0])
 		return jprint(json, 1);
 	sep = ccut(&spec, cur);
-	if (cur[0] == '*' && cur[1] == '\0') {
+	if ((cur[0] == '*' || cur[0] == ':') && cur[1] == '\0') {
 		char **data;
 		if ((data = json_list(json)) != NULL) {
 			int j;
 			for (j = 0; data[j]; j++)
 				follow(data[j], spec);
+			free(data);
+			return 0;
+		}
+		if ((data = json_dict(json)) != NULL) {
+			int j;
+			for (j = 0; data[j]; j++) {
+				char *v = data[j];
+				if (cur[0] == ':') {
+					v += json_len(v);
+					v += json_ws(v);
+					if (v[0] != ':')
+						continue;
+					v += json_ws(v + 1) + 1;
+				}
+				follow(v, spec);
+			}
 			free(data);
 			return 0;
 		}
