@@ -100,7 +100,8 @@ static int follow(char *json, char *spec)
 		return 1;
 	}
 	if (sep == ',') {
-		jprint(json_dict_get(json, cur), 0);
+		new = json_dict_get(json, cur);
+		jprint(new ? new : json_list_get(json, atoi(cur)), 0);
 		return follow(json, spec);
 	}
 	if ((new = json_dict_get(json, cur)) != NULL)
