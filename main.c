@@ -115,9 +115,11 @@ static int follow(char *json, char *spec)
 int main(int argc, char *argv[])
 {
 	char *dat = readall(0);
+	int i;
 	if (dat == NULL)
 		return 1;
-	follow(dat, argv[1]);
+	for (i = 1; i < argc; i++)
+		follow(dat, argv[i]);
 	free(dat);
 	return 0;
 }
