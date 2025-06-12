@@ -49,7 +49,7 @@ long json_len(char *json)
 		return *s == '}' ? s - json + 1 : s - json;
 	}
 	if (isalnum((unsigned char) *s) || *s == '.' || *s == '-') {
-		while (isalnum((unsigned char) *s) || *s == '.' || *s == '-')
+		while (isalnum((unsigned char) *s) || *s == '.' || *s == '-' || *s == '+')
 			s++;
 		return s - json;
 	}
